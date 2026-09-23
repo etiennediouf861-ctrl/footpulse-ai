@@ -1,0 +1,6 @@
+{
+  "name": "FootPulse AI - Analyse & Pronostics Football",
+  "description": "Plateforme d'analyse de football en temps réel avec statistiques détaillées (xG, tirs, momentum), alertes de buts et pronostics générés par IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
