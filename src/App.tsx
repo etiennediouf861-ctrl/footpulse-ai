@@ -31,6 +31,7 @@ import { AiChatAnalyst } from './components/AiChatAnalyst';
 import { GoalAlertModal } from './components/GoalAlertModal';
 import { AlertSettingsModal } from './components/AlertSettingsModal';
 import { sendGoalNotification, requestNotificationPermission } from './utils/notifications';
+import { apiUrl } from './utils/api';
 import {
   Sparkles,
   BarChart2,
@@ -51,6 +52,7 @@ import {
 export default function App() {
   const [matches, setMatches] = useState<FootballMatch[]>(INITIAL_MATCHES);
   const [selectedMatchId, setSelectedMatchId] = useState<string>('rm-mci');
+  const [liveDataConnected, setLiveDataConnected] = useState(false);
   const [activeTab, setActiveTab] = useState<
     | 'LIVE_ODDS'
     | 'SMART_BUILDER'
@@ -86,6 +88,59 @@ export default function App() {
 
   // Selected match pointer
   const selectedMatch = matches.find((m) => m.id === selectedMatchId) || matches[0];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadLiveMatches = async () => {
+      try {
+        const response = await fetch(apiUrl('/api/live-matches'));
+        if (!response.ok) throw new Error('Live data unavailable');
+
+        const data = (await response.json()) as {
+          matches?: Array<{
+            id: string;
+            competition: string;
+            homeTeam: string;
+            awayTeam: string;
+            score: { home: number; away: number };
+            minute: number;
+            status: string;
+          }>;
+        };
+
+        if (cancelled || !data.matches?.length) return;
+
+        const liveMatches = data.matches.map((liveMatch, index) => {
+          const template = INITIAL_MATCHES[index % INITIAL_MATCHES.length];
+          return {
+            ...template,
+            id: liveMatch.id,
+            competition: liveMatch.competition,
+            minute: liveMatch.minute,
+            status: liveMatch.status === 'HT' ? 'HT' : liveMatch.status === 'FT' ? 'FT' : '2H',
+            isSimulating: false,
+            score: liveMatch.score,
+            homeTeam: { ...template.homeTeam, name: liveMatch.homeTeam, shortName: liveMatch.homeTeam.slice(0, 3).toUpperCase() },
+            awayTeam: { ...template.awayTeam, name: liveMatch.awayTeam, shortName: liveMatch.awayTeam.slice(0, 3).toUpperCase() },
+          } satisfies FootballMatch;
+        });
+
+        setMatches(liveMatches);
+        setLiveDataConnected(true);
+        setSelectedMatchId((currentId) => liveMatches.some((match) => match.id === currentId) ? currentId : liveMatches[0].id);
+      } catch {
+        if (!cancelled) setLiveDataConnected(false);
+      }
+    };
+
+    loadLiveMatches();
+    const interval = window.setInterval(loadLiveMatches, 30_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, []);
 
   // Trigger Goal Function
   const triggerGoal = useCallback(
@@ -329,7 +384,7 @@ export default function App() {
 
       setMatches((prevMatches) =>
         prevMatches.map((m) => {
-          if (m.minute >= 90) return m; // match ended
+          if (!m.isSimulating || m.minute >= 90) return m;
 
           const nextMinute = m.minute + 1;
 

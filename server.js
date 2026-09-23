@@ -23,6 +23,36 @@ app.use(express.json());
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+app.get("/api/live-matches", async (_req, res) => {
+  const apiKey = process.env.API_FOOTBALL_KEY;
+  if (!apiKey) {
+    return res.status(503).json({ error: "API_FOOTBALL_KEY non configur\xE9e." });
+  }
+  try {
+    const response = await fetch("https://v3.football.api-sports.io/fixtures?live=all", {
+      headers: { "x-apisports-key": apiKey }
+    });
+    if (!response.ok) {
+      return res.status(response.status).json({ error: "Le fournisseur de donn\xE9es football a refus\xE9 la requ\xEAte." });
+    }
+    const payload = await response.json();
+    return res.json({
+      source: "API-Football",
+      matches: (payload.response || []).map((fixture) => ({
+        id: `api-${fixture.fixture.id}`,
+        competition: `${fixture.league.name} - ${fixture.league.country}`,
+        homeTeam: fixture.teams.home.name,
+        awayTeam: fixture.teams.away.name,
+        score: { home: fixture.goals.home ?? 0, away: fixture.goals.away ?? 0 },
+        minute: fixture.fixture.status.elapsed ?? 0,
+        status: fixture.fixture.status.short
+      }))
+    });
+  } catch (error) {
+    console.error("Error fetching live football data:", error);
+    return res.status(502).json({ error: "Impossible de joindre le fournisseur de donn\xE9es football." });
+  }
+});
 var ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
   httpOptions: {
