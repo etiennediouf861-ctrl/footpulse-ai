@@ -110,7 +110,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
           </div>
 
           {/* Simulation fast action triggers */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          {!match.isLiveData && <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <button
               onClick={() => onSimulateGoal('home')}
               className="flex items-center gap-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 px-2.5 py-1 text-[11px] font-bold text-emerald-300 transition"
@@ -134,7 +134,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
             >
               ⚡ Occasion
             </button>
-          </div>
+          </div>}
         </div>
 
         {/* Away Team */}

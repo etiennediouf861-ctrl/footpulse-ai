@@ -32,6 +32,27 @@ import { GoalAlertModal } from './components/GoalAlertModal';
 import { AlertSettingsModal } from './components/AlertSettingsModal';
 import { sendGoalNotification, requestNotificationPermission } from './utils/notifications';
 import { apiUrl } from './utils/api';
+
+const emptyLiveStats: FootballMatch['stats'] = {
+  possession: { home: 0, away: 0 },
+  xg: { home: 0, away: 0 },
+  shots: { home: 0, away: 0 },
+  shotsOnTarget: { home: 0, away: 0 },
+  shotsOffTarget: { home: 0, away: 0 },
+  blockedShots: { home: 0, away: 0 },
+  bigChances: { home: 0, away: 0 },
+  corners: { home: 0, away: 0 },
+  fouls: { home: 0, away: 0 },
+  yellowCards: { home: 0, away: 0 },
+  redCards: { home: 0, away: 0 },
+  offsides: { home: 0, away: 0 },
+  passesCompleted: { home: 0, away: 0 },
+  totalPasses: { home: 0, away: 0 },
+  passAccuracy: { home: 0, away: 0 },
+  tacklesWon: { home: 0, away: 0 },
+  saves: { home: 0, away: 0 },
+  dangerousAttacks: { home: 0, away: 0 },
+};
 import {
   Sparkles,
   BarChart2,
@@ -116,13 +137,55 @@ export default function App() {
           return {
             ...template,
             id: liveMatch.id,
+            isLiveData: true,
             competition: liveMatch.competition,
+            stadium: 'Stade non communiqué',
+            referee: 'Arbitre non communiqué',
             minute: liveMatch.minute,
             status: liveMatch.status === 'HT' ? 'HT' : liveMatch.status === 'FT' ? 'FT' : '2H',
             isSimulating: false,
             score: liveMatch.score,
-            homeTeam: { ...template.homeTeam, name: liveMatch.homeTeam, shortName: liveMatch.homeTeam.slice(0, 3).toUpperCase() },
-            awayTeam: { ...template.awayTeam, name: liveMatch.awayTeam, shortName: liveMatch.awayTeam.slice(0, 3).toUpperCase() },
+            stats: emptyLiveStats,
+            momentum: { homeDominance: 50, awayDominance: 50, history: [] },
+            xgTimeline: [],
+            events: [],
+            shots: [],
+            currentPlayPhase: {
+              zone: 'MIDDLE',
+              attackingTeam: 'home',
+              description: 'Les statistiques détaillées ne sont pas fournies par cette source.',
+              ballPosition: { x: 50, y: 50 },
+            },
+            attackCorridor: {
+              home: { left: 0, center: 0, right: 0 },
+              away: { left: 0, center: 0, right: 0 },
+            },
+            homeTeam: {
+              ...template.homeTeam,
+              id: `${liveMatch.id}-home`,
+              name: liveMatch.homeTeam,
+              shortName: liveMatch.homeTeam.slice(0, 3).toUpperCase(),
+              city: '',
+              country: '',
+              formation: 'Non communiqué',
+              logo: '⚽',
+              manager: 'Non communiqué',
+              startingXI: [],
+              bench: [],
+            },
+            awayTeam: {
+              ...template.awayTeam,
+              id: `${liveMatch.id}-away`,
+              name: liveMatch.awayTeam,
+              shortName: liveMatch.awayTeam.slice(0, 3).toUpperCase(),
+              city: '',
+              country: '',
+              formation: 'Non communiqué',
+              logo: '⚽',
+              manager: 'Non communiqué',
+              startingXI: [],
+              bench: [],
+            },
           } satisfies FootballMatch;
         });
 

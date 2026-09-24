@@ -176,6 +176,7 @@ export interface AiPrediction {
 
 export interface FootballMatch {
   id: string;
+  isLiveData?: boolean;
   competition: string;
   stadium: string;
   referee: string;
