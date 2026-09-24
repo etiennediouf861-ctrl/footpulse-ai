@@ -198,7 +198,7 @@ export default function App() {
     };
 
     loadLiveMatches();
-    const interval = window.setInterval(loadLiveMatches, 30_000);
+    const interval = window.setInterval(loadLiveMatches, 15 * 60_000);
     return () => {
       cancelled = true;
       window.clearInterval(interval);
