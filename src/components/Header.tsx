@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="border-b border-slate-800/80 bg-[#0d1322]/90 backdrop-blur-md sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto min-w-0 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 text-xl font-black text-white shadow-lg shadow-emerald-500/20">
@@ -58,10 +58,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Center: Live Simulation Controls */}
-        <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl p-1.5">
+        <div className="flex shrink-0 items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl p-1.5">
           <button
             onClick={onToggleSimulating}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold transition ${
               isSimulating
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                 : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
@@ -101,12 +101,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2.5">
           {/* Combiner Button */}
           {onOpenCombiner && (
             <button
               onClick={onOpenCombiner}
-              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-teal-500/20 border border-amber-500/40 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-amber-300 hover:bg-amber-500/30 transition shadow-sm"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-teal-500/20 border border-amber-500/40 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-amber-300 hover:bg-amber-500/30 transition shadow-sm"
               title="Ouvrir le générateur de combinés intelligents optimisés par IA"
             >
               <Layers className="h-3.5 w-3.5 text-amber-400" />
@@ -117,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Kelly Calculator Button */}
           <button
             onClick={onOpenKellyModal}
-            className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-emerald-300 hover:bg-emerald-500/30 transition shadow-sm"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-emerald-300 hover:bg-emerald-500/30 transition shadow-sm"
             title="Ouvrir le calculateur de mise Kelly Criterion (EV+)"
           >
             <Calculator className="h-3.5 w-3.5 text-emerald-400" />
@@ -127,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Quick Test Goal */}
           <button
             onClick={onTriggerTestGoal}
-            className="flex items-center gap-1.5 rounded-xl bg-slate-900/80 border border-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-700 transition"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-slate-900/80 border border-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-700 transition"
             title="Simule un but immédiat pour tester l'alerte sonore et visuelle"
           >
             <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
