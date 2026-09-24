@@ -71,8 +71,8 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [matches, setMatches] = useState<FootballMatch[]>(INITIAL_MATCHES);
-  const [selectedMatchId, setSelectedMatchId] = useState<string>('rm-mci');
+  const [matches, setMatches] = useState<FootballMatch[]>([]);
+  const [selectedMatchId, setSelectedMatchId] = useState<string>('');
   const [liveDataConnected, setLiveDataConnected] = useState(false);
   const [activeTab, setActiveTab] = useState<
     | 'LIVE_ODDS'
@@ -100,7 +100,7 @@ export default function App() {
     setKellyParams({ odds, prob, name });
     setIsKellyOpen(true);
   };
-  const [isSimulating, setIsSimulating] = useState(true);
+  const [isSimulating] = useState(false);
   const [simulationSpeed, setSimulationSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -559,18 +559,36 @@ export default function App() {
     setNotificationsEnabled(granted);
   };
 
+  if (!selectedMatch) {
+    return (
+      <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans">
+        <Header
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled(!soundEnabled)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenKellyModal={() => setIsKellyOpen(true)}
+          onOpenCombiner={() => setActiveTab('SMART_BUILDER')}
+        />
+        <main className="flex flex-1 items-center justify-center px-6 py-16 text-center">
+          <div className="max-w-md space-y-3">
+            <div className="text-4xl">⚽</div>
+            <h2 className="text-xl font-black text-white">Données live indisponibles</h2>
+            <p className="text-sm leading-6 text-slate-400">
+              Aucun match réel n’est disponible pour le moment. Vérifie la variable API_FOOTBALL_KEY dans Render.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans">
       {/* Top App Bar */}
       <Header
-        isSimulating={isSimulating}
-        onToggleSimulating={() => setIsSimulating(!isSimulating)}
-        simulationSpeed={simulationSpeed}
-        onChangeSpeed={setSimulationSpeed}
         soundEnabled={soundEnabled}
         onToggleSound={() => setSoundEnabled(!soundEnabled)}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onTriggerTestGoal={() => triggerGoal(selectedMatch.id, 'home')}
         onOpenKellyModal={() => setIsKellyOpen(true)}
         onOpenCombiner={() => setActiveTab('SMART_BUILDER')}
       />
